@@ -20,19 +20,26 @@ class FilmController {
         return filmService.findTotaalVrijePlaatsen();
     }
     @GetMapping("films/{id}")
-    IdTiTelJaarVrijePlaatsen findById(@PathVariable long id) {
+    IdTitelJaarVrijePlaatsen findById(@PathVariable long id) {
         return filmService.findById(id)
-                .map(IdTiTelJaarVrijePlaatsen::new)
+                .map(IdTitelJaarVrijePlaatsen::new)
                 .orElseThrow(()-> new FilmNietGevondenException(id));
     }
     @GetMapping("films")
-    Stream<IdTiTelJaarVrijePlaatsen> findAll() {
+    Stream<IdTitelJaarVrijePlaatsen> findAll() {
         return filmService.findAll()
                 .stream()
-                .map(IdTiTelJaarVrijePlaatsen::new);
+                .map(IdTitelJaarVrijePlaatsen::new);
     }
-    private record IdTiTelJaarVrijePlaatsen(long id, String titel, int jaar, int vrijePlaatsen) {
-        IdTiTelJaarVrijePlaatsen(Film film) {
+
+    @GetMapping(value = "films", params = "jaar")
+    Stream<IdTitelJaarVrijePlaatsen> findByJaar(int jaar) {
+        return filmService.findByJaar(jaar)
+                .stream()
+                .map(IdTitelJaarVrijePlaatsen::new);
+    }
+    private record IdTitelJaarVrijePlaatsen(long id, String titel, int jaar, int vrijePlaatsen) {
+        IdTitelJaarVrijePlaatsen(Film film) {
             this(film.getId(), film.getTitel(), film.getJaar(), film.getVrijePlaatsen());
         }
     }

@@ -66,4 +66,13 @@ public class FilmControllerTest {
                         jsonPath("length()")
                                 .value(JdbcTestUtils.countRowsInTable(jdbcClient, FILMS_TABLE)));
     }
+    @Test
+    void findByJaarVindtJuisteFilms() throws Exception {
+        mockMvc.perform(get("/films").param("jaar", "2001"))
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("length()")
+                                .value(JdbcTestUtils.countRowsInTableWhere(jdbcClient, FILMS_TABLE,
+                                        "jaar = 2001")));
+    }
 }
