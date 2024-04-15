@@ -3,6 +3,7 @@ package be.vdab.cinefest.films;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -32,5 +33,15 @@ class FilmRepository {
                 .param(id)
                 .query(Film.class)
                 .optional();
+    }
+    List<Film> findAll() {
+        String sql = """
+                select id, titel, jaar, vrijePlaatsen, aankoopprijs
+                from films
+                order by titel
+                """;
+        return jdbcClient.sql(sql)
+                .query(Film.class)
+                .list();
     }
 }
