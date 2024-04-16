@@ -56,4 +56,13 @@ class FilmRepository {
                 .query(Film.class)
                 .list();
     }
+    void delete(long id) {
+        String sql = """
+                delete from films
+                where id = ?
+                """;
+        jdbcClient.sql(sql)
+                .param(id)
+                .update();
+    }
 }

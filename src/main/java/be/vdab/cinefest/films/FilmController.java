@@ -1,5 +1,6 @@
 package be.vdab.cinefest.films;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +38,10 @@ class FilmController {
         return filmService.findByJaar(jaar)
                 .stream()
                 .map(IdTitelJaarVrijePlaatsen::new);
+    }
+    @DeleteMapping("films/{id}")
+    void delete(@PathVariable long id) {
+        filmService.delete(id);
     }
     private record IdTitelJaarVrijePlaatsen(long id, String titel, int jaar, int vrijePlaatsen) {
         IdTitelJaarVrijePlaatsen(Film film) {

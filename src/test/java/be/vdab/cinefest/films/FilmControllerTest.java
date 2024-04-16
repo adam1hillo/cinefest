@@ -9,6 +9,8 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -74,5 +76,12 @@ public class FilmControllerTest {
                         jsonPath("length()")
                                 .value(JdbcTestUtils.countRowsInTableWhere(jdbcClient, FILMS_TABLE,
                                         "jaar = 2001")));
+    }
+    @Test
+    void deleteVerwijdertEenFilm() throws Exception {
+        long id = idVanTest1Film();
+        mockMvc.perform(delete("/films/{id}", id))
+                .andExpect(status().isOk());
+        assertThat(JdbcTestUtils.countRowsInTableWhere(jdbcClient, FILMS_TABLE, "id = " + id)).isZero();
     }
 }
