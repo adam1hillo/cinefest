@@ -1,6 +1,8 @@
 package be.vdab.cinefest.films;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -10,6 +12,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -97,5 +100,14 @@ public class FilmControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         assertThat(JdbcTestUtils.countRowsInTableWhere(jdbcClient, FILMS_TABLE, "titel = 'test3' and id = " + resposeBody)).isOne();
+    }
+    @ParameterizedTest
+    @ValueSource(strings = {"filmZonderTitel.json", "filmMetLegeTitel.json", "filmZonderJaar.json", "filmMetNegatiefJaar.json"})
+    void createMetVerkeerdeDataMislukt(String bestandsNaam) throws Exception {
+        var jsonData = Files.readString(TEST_RESOURCES.resolve(bestandsNaam));
+        mockMvc.perform(post("/films")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonData))
+                .andExpect(status().isBadRequest());
     }
 }
