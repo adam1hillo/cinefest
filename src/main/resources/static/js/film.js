@@ -3,6 +3,7 @@ import {toon, setText, byId, verberg} from "./util.js";
 let id;
 
 byId("zoek").onclick = async function() {
+    byId("nieuweTitel").value = "";
     verbergFilmEnFouten();
     const zoekIdInput = byId("zoekId");
     if (zoekIdInput.checkValidity()) {
@@ -14,12 +15,12 @@ byId("zoek").onclick = async function() {
     }
 }
 
-
 function verbergFilmEnFouten() {
     verberg("film");
     verberg("zoekIdFout");
     verberg("nietGevonden");
     verberg("storing")
+    verberg("nieuweTitelFout");
 }
 
 async function findById(id) {
@@ -48,5 +49,29 @@ byId("verwijder").onclick = async function() {
         zoekIdInput.focus();
     } else {
         toon("storing");
+    }
+}
+async function updateTitel(titel) {
+    const response = await fetch(`films/${id}/titel`,
+        {
+            method: "PATCH",
+            headers: {'Content-Type': "text/plain"},
+            body: titel
+        })
+    if (response.ok) {
+        setText("titel", titel);
+    } else {
+        toon("storing");
+    }
+}
+byId("bewaar").onclick = async function() {
+    const nieuweTitelInput = byId("nieuweTitel");
+    if (nieuweTitelInput.checkValidity()) {
+        verberg("nieuweTitelFout");
+        updateTitel(nieuweTitelInput.value);
+        nieuweTitelInput.value = "";
+    } else {
+        toon("nieuweTitelFout");
+        nieuweTitelInput.focus();
     }
 }

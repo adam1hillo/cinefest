@@ -36,4 +36,8 @@ class FilmService {
         Film film = new Film(0, nieuweFilm.titel(), nieuweFilm.jaar(), 0, BigDecimal.ZERO);
         return filmRepository.create(film);
     }
+    @Transactional
+    void updateTitel(long id, String nieuweTitel) {
+        filmRepository.updateTitel(id, nieuweTitel);
+    }
 }

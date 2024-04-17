@@ -12,7 +12,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -108,6 +107,31 @@ public class FilmControllerTest {
         mockMvc.perform(post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonData))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void patchWijzigtDeTitelVanDeFilm() throws Exception {
+        long id = idVanTest1Film();
+        mockMvc.perform(patch("/films/{id}/titel", id)
+                .contentType(MediaType.TEXT_PLAIN)
+                .content("test"))
+                .andExpect(status().isOk());
+        assertThat(JdbcTestUtils.countRowsInTableWhere(jdbcClient, FILMS_TABLE, "titel = 'test' and id = " + id)).isOne();
+    }
+    @Test
+    void patchVanOnbestaandeFilmMislukt() throws Exception {
+        mockMvc.perform(patch("/films/{id}/titel", Long.MAX_VALUE)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .content("test"))
+                    .andExpect(status().isNotFound());
+    }
+    @ParameterizedTest
+    @ValueSource(strings = {"", " "})
+    void patchMetVerkeerdeTitelMislukt(String verkeerdeTitel) throws Exception {
+        mockMvc.perform(patch("/films/{id}/titel", idVanTest1Film())
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .content(verkeerdeTitel))
                 .andExpect(status().isBadRequest());
     }
 }
