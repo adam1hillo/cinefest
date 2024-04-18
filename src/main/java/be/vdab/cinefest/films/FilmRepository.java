@@ -35,6 +35,30 @@ class FilmRepository {
                 .query(Film.class)
                 .optional();
     }
+    Optional<Film> findAndLockById(long id) {
+        String sql = """
+                select id, titel, jaar, vrijePlaatsen, aankoopprijs
+                from films
+                where id = ?
+                for update
+                """;
+        return jdbcClient.sql(sql)
+                .param(id)
+                .query(Film.class)
+                .optional();
+    }
+
+    void updateVrijePlaatsen(long id, int vrijePlaatsen) {
+        String sql = """
+                update films
+                set vrijePlaatsen = ?
+                where id = ?
+                """;
+        if (jdbcClient.sql(sql).params(vrijePlaatsen, id).update() == 0) {
+            throw new FilmNietGevondenException(id);
+        }
+
+    }
     List<Film> findAll() {
         String sql = """
                 select id, titel, jaar, vrijePlaatsen, aankoopprijs

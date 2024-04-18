@@ -53,6 +53,10 @@ class FilmController {
         filmService.updateTitel(id, nieuweTitel);
     }
 
+    @PostMapping("films/{id}/reservaties")
+    long reserveer(@PathVariable long id, @RequestBody @Valid NieuweReservatie nieuweReservatie) {
+        return filmService.reserveer(id, nieuweReservatie);
+    }
 
 
 

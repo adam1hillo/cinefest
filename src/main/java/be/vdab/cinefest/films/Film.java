@@ -11,6 +11,13 @@ class Film {
     private final long id;
     private final String titel;
     private final int jaar;
-    private final int vrijePlaatsen;
+    private int vrijePlaatsen;
     private final BigDecimal aankoopprijs;
+
+    void reserveer(int aantalPlaatsen) {
+        if (aantalPlaatsen > vrijePlaatsen) {
+            throw new OnvoldoendeVrijePlaatsenException();
+        }
+        vrijePlaatsen -= aantalPlaatsen;
+    }
 }
