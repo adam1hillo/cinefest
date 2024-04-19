@@ -18,7 +18,7 @@ function verbergReservatiesEnFouten() {
     verberg("storing");
 }
 async function findByEmailAdres(emailAdres) {
-    const response = await fetch(`/reservaties?emailAdres=${emailAdres}`);
+    const response = await fetch(`reservaties?emailAdres=${emailAdres}`);
     if (response.ok) {
         const reservaties = await response.json();
         toon("reservatiesTable");
