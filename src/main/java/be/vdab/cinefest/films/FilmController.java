@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Stream;
-
+@RequestMapping("films")
 @RestController
 class FilmController {
 
@@ -15,45 +15,46 @@ class FilmController {
         this.filmService = filmService;
     }
 
-    @GetMapping("films/totaalvrijeplaatsen")
+    @GetMapping("totaalvrijeplaatsen")
     long findTotaalVrijePlaatesen() {
         return filmService.findTotaalVrijePlaatsen();
     }
-    @GetMapping("films/{id}")
+
+    @GetMapping("{id}")
     IdTitelJaarVrijePlaatsen findById(@PathVariable long id) {
         return filmService.findById(id)
                 .map(IdTitelJaarVrijePlaatsen::new)
                 .orElseThrow(()-> new FilmNietGevondenException(id));
     }
-    @GetMapping("films")
+    @GetMapping
     Stream<IdTitelJaarVrijePlaatsen> findAll() {
         return filmService.findAll()
                 .stream()
                 .map(IdTitelJaarVrijePlaatsen::new);
     }
 
-    @GetMapping(value = "films", params = "jaar")
+    @GetMapping(params = "jaar")
     Stream<IdTitelJaarVrijePlaatsen> findByJaar(int jaar) {
         return filmService.findByJaar(jaar)
                 .stream()
                 .map(IdTitelJaarVrijePlaatsen::new);
     }
-    @DeleteMapping("films/{id}")
+    @DeleteMapping("{id}")
     void delete(@PathVariable long id) {
         filmService.delete(id);
     }
 
-    @PostMapping("films")
+    @PostMapping
     long create(@RequestBody @Valid NieuweFilm nieuweFilm) {
         return filmService.create(nieuweFilm);
     }
 
-    @PatchMapping("films/{id}/titel")
+    @PatchMapping("{id}/titel")
     void updateTitel(@PathVariable long id, @RequestBody @NotBlank String nieuweTitel) {
         filmService.updateTitel(id, nieuweTitel);
     }
 
-    @PostMapping("films/{id}/reservaties")
+    @PostMapping("{id}/reservaties")
     long reserveer(@PathVariable long id, @RequestBody @Valid NieuweReservatie nieuweReservatie) {
         return filmService.reserveer(id, nieuweReservatie);
     }
